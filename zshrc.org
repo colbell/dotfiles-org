@@ -1,6 +1,6 @@
 #+TITLE:      My zshrc configuration
 #+AUTHOR:     Colin Bell
-#+STARTUP:    showall
+#+STARTUP:    hideall
 #+PROPERTY:   header-args+ :comments both
 #+PROPERTY:   header-args+ :tangle "~/.zshrc"
 -----
