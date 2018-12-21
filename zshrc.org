@@ -1,0 +1,261 @@
+#+TITLE:      My zshrc configuration
+#+AUTHOR:     Colin Bell
+#+STARTUP:    showall
+#+PROPERTY:   header-args+ :comments both
+#+PROPERTY:   header-args+ :tangle "~/.zshrc"
+-----
+* oh-my-zsh home
+
+#+BEGIN_SRC sh
+  export ZSH=~/.oh-my-zsh
+#+END_SRC
+
+* Theme
+
+I use the Spaceship theme for oh-my-zsh which does not come with oh-my-zsh. To install it do the following:
+
+#+BEGIN_SRC sh :tangle no
+  git clone https://github.com/denysdovhan/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt"
+  ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
+#+END_SRC
+
+Configure the prompt and specify the theme.
+
+#+BEGIN_SRC sh
+  SPACESHIP_PROMPT_ORDER=(
+    # time        # Time stampts section
+    user          # Username section
+    dir           # Current directory section
+    host          # Hostname section
+    git           # Git section (git_branch + git_status)
+    # hg            # Mercurial section (hg_branch  + hg_status)
+    package     # Package version
+    node          # Node.js section
+    ruby          # Ruby section
+    elixir        # Elixir section
+    # xcode       # Xcode section
+    # swift       # Swift section
+    # golang      # Go section
+    # php         # PHP section
+    # rust        # Rust section
+    # haskell     # Haskell Stack section
+    # julia       # Julia section
+    # docker      # Docker section
+    aws           # Amazon Web Services section
+    venv          # virtualenv section
+    # conda       # conda virtualenv section
+    pyenv         # Pyenv section
+    # dotnet      # .NET section
+    # ember       # Ember.js section
+    # kubecontext # Kubectl context section
+    exec_time    # Execution time
+    line_sep      # Line break
+    battery       # Battery level and status
+    # vi_mode     # Vi-mode indicator
+    jobs          # Background jobs indicator
+    exit_code     # Exit code section
+    char          # Prompt character
+  )
+
+  ZSH_THEME="spaceship"
+#+END_SRC
+
+* Load Standard oh-my-zsh configuration
+
+Fine tune zsh.
+
+#+BEGIN_SRC sh
+  # Uncomment the following line to use case-sensitive completion.
+  # CASE_SENSITIVE="true"
+
+  # Uncomment the following line to use hyphen-insensitive completion. Case
+  # sensitive completion must be off. _ and - will be interchangeable.
+  # HYPHEN_INSENSITIVE="true"
+
+  # Uncomment the following line to disable bi-weekly auto-update checks.
+  # DISABLE_AUTO_UPDATE="true"
+
+  # Uncomment the following line to change how often to auto-update (in days).
+  # export UPDATE_ZSH_DAYS=13
+
+  # Uncomment the following line to disable colors in ls.
+  # DISABLE_LS_COLORS="true"
+
+  # Uncomment the following line to disable auto-setting terminal title.
+  DISABLE_AUTO_TITLE="true"
+
+  # Uncomment the following line to enable command auto-correction.
+  # ENABLE_CORRECTION="true"
+
+  # Uncomment the following line to display red dots whilst waiting for completion.
+  # COMPLETION_WAITING_DOTS="true"
+
+  # Uncomment the following line if you want to disable marking untracked files
+  # under VCS as dirty. This makes repository status check for large repositories
+  # much, much faster.
+  # DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+  # Uncomment the following line if you want to change the command execution time
+  # stamp shown in the history command output.
+  # The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+  # HIST_STAMPS="mm/dd/yyyy"
+
+  # Would you like to use another custom folder than $ZSH/custom?
+  # ZSH_CUSTOM=/path/to/new-custom-folder
+  ZSH_CUSTOM=~/.oh-my-zsh-custom
+
+  # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+  # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+  # Example format: plugins=(rails git textmate ruby lighthouse)
+  # Add wisely, as too many plugins slow down shell startup.
+  plugins=(colored-man-pages colorize compleat mix asdf zsh-autosuggestions)
+#+END_SRC
+
+Load oh-my-zsh configuration.
+
+#+BEGIN_SRC sh
+  source $ZSH/oh-my-zsh.sh
+#+END_SRC
+
+* Environment
+
+My mail.
+
+#+BEGIN_SRC sh
+export MAIL=/var/mail/$USER
+#+END_SRC
+
+#+BEGIN_SRC sh
+setopt HIST_IGNORE_ALL_DUPS
+unsetopt AUTO_CD
+
+# You may need to manually set your language environment
+# export LANG=en_AU.UTF-8
+
+export GTAGSLABEL=pygments
+
+export MANWIDTH=96
+#+END_SRC
+
+Allow less to work on compressed files.
+
+#+BEGIN_SRC sh
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+#+END_SRC
+
+Enable history in IEX
+
+#+BEGIN_SRC sh
+export ERL_AFLAGS="-kernel shell_history enabled"
+#+END_SRC
+
+Recent versions of Fedora have renamed qmake.
+
+#+BEGIN_SRC sh
+  if grep -iq 'id=fedora' /etc/os-release; then
+      export QMAKE=/usr/bin/qmake-qt4
+  fi
+#+END_SRC
+
+Preferred editor
+
+#+BEGIN_SRC sh
+export EDITOR='vim'
+#+END_SRC
+
+Always show scrollbars in Gnome. The default behaviour of
+only showing on mouse-over is incredibly irritating.
+
+#+BEGIN_SRC sh
+export GTK_OVERLAY_SCROLLING=0
+#+END_SRC
+
+Wayland (as at Ubuntu Gnome 17.04) doesn't load ~/.Xresources at startup.
+#+BEGIN_SRC sh
+if [[ "$XDG_SESSION_TYPE" == "wayland" ]]; then
+  xrdb -merge $HOME/.Xresources
+fi
+#+END_SRC
+
+#+BEGIN_SRC sh
+if [ -f "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
+    source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+if [ -f "/usr/bin/aws_completer" ]; then
+    autoload bashcompinit
+    bashcompinit
+    complete -C '/usr/bin/aws_completer' aws
+fi
+#+END_SRC
+
+* Asdf Version Manager
+
+Load asdf version manager. I use it for installing Erlang/Elixir, Ruby etc.
+
+#+BEGIN_SRC sh
+if [ -d "$HOME/.asdf" ]; then
+    . $HOME/.asdf/asdf.sh
+    . $HOME/.asdf/completions/asdf.bash
+fi
+#+END_SRC
+
+* Aliases
+
+Upgrade system packages
+
+#+BEGIN_SRC sh
+  if [[ "$OSTYPE" =~ ^freebsd ]]; then
+    alias pkg-update='sudo pkg update'
+  elif [[ -f /etc/os-release ]]; then
+    if grep -q 'ID=arch' /etc/os-release; then
+      alias pkg-update='sudo etckeeper pre-install && sudo pacman -Syu && sudo etckeeper post-install'
+    elif grep -q 'ID_LIKE=debian' /etc/os-release; then
+      alias pkg-update='sudo apt update && sudo apt full-upgrade'
+    fi
+  fi
+#+END_SRC
+
+#+BEGIN_SRC sh
+  alias h='history'
+
+  alias ec='emacsclient'
+
+  alias openports='netstat --all --numeric --programs --inet'
+
+  alias ,='ls -CFsh'
+  alias r='ls -ltr'
+  alias s='ls -lhSr'
+
+  alias wttr='curl wttr.in'
+
+  alias python=python3
+#+END_SRC
+
+* Functions
+#+BEGIN_SRC sh
+
+# Pretty print current path.
+P() {
+  echo $PATH | tr -s ':' '\n'
+}
+
+# Pretty print directory history
+D()
+{
+  if [ $# -eq 0 ]; then
+    z=0
+    for i in `dirs`; do
+      echo $z $i
+      z=$((z+1))
+    done
+  elif [ $1 -gt 0 ]; then
+    pushd +$1
+  elif [ $1 -lt 0 ]; then
+    z=$1
+    popd +$((-z))
+  else
+    echo d: Broken
+  fi
+}
+#+END_SRC
