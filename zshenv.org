@@ -1,0 +1,35 @@
+#+TITLE:      My .zshenv configuration
+#+AUTHOR:     Colin Bell
+#+STARTUP:    hideall
+#+PROPERTY:   header-args+ :comments both
+#+PROPERTY:   header-args+ :tangle "~/.zshenv"
+-----
+* Path
+
+#+BEGIN_SRC sh
+if [ -d "$HOME/bin" ] && [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
+    PATH="$PATH:$HOME/bin"
+fi
+
+if [ -d "$HOME/go/bin" ] && [[ ":$PATH:" != *":$HOME/go/bin:"* ]]; then
+    PATH="$PATH:$HOME/go/bin"
+fi
+
+if [ -d "$HOME/.local/bin" ] && [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    PATH="$PATH:$HOME/.local/bin"
+fi
+
+if [ -d "$HOME/.node_modules/bin" ] && [[ ":$PATH:" != *":$HOME/.node_modules/bin:"* ]]; then
+    PATH="$PATH:$HOME/.node_modules/bin"
+fi
+
+export PATH
+#+END_SRC
+
+* Private envvars
+
+#+BEGIN_SRC sh
+if [ -f "$HOME/.cnb-envvars" ]; then
+    source $HOME/.cnb-envvars
+fi
+#+END_SRC
